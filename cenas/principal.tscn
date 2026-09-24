@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=36 format=3]
 
 [ext_resource type="PackedScene" path="res://cenas/jogador.tscn" id="1_jogador"]
 [ext_resource type="PackedScene" path="res://cenas/caixa_pequena.tscn" id="1_pequena"]
@@ -42,6 +42,65 @@ size = Vector3(4, 2.736, 3)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_plataforma"]
 size = Vector3(4, 2.736, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_torre"]
+albedo_color = Color(1, 0.55, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_torre"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(4, 6, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_torre"]
+size = Vector3(4, 6, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau1"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 0.75, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau1"]
+size = Vector3(3, 0.75, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau2"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 1.5, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau2"]
+size = Vector3(3, 1.5, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau3"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 2.25, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau3"]
+size = Vector3(3, 2.25, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau4"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 3.0, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau4"]
+size = Vector3(3, 3.0, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau5"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 3.75, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau5"]
+size = Vector3(3, 3.75, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau6"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 4.5, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau6"]
+size = Vector3(3, 4.5, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_degrau7"]
+material = SubResource("StandardMaterial3D_torre")
+size = Vector3(3, 5.25, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_degrau7"]
+size = Vector3(3, 5.25, 1.5)
 
 [node name="Principal" type="Node3D"]
 
@@ -123,5 +182,80 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42, 1.2, 0)
 
 [node name="Topo" parent="Pilha" instance=ExtResource("2_media")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+
+[node name="Torre" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 4)
+
+[node name="PlataformaAlta" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -0.5)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/PlataformaAlta"]
+mesh = SubResource("BoxMesh_torre")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/PlataformaAlta"]
+shape = SubResource("BoxShape3D_torre")
+
+[node name="Degrau1" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 11.25)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau1"]
+mesh = SubResource("BoxMesh_degrau1")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau1"]
+shape = SubResource("BoxShape3D_degrau1")
+
+[node name="Degrau2" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 9.75)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau2"]
+mesh = SubResource("BoxMesh_degrau2")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau2"]
+shape = SubResource("BoxShape3D_degrau2")
+
+[node name="Degrau3" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.125, 8.25)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau3"]
+mesh = SubResource("BoxMesh_degrau3")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau3"]
+shape = SubResource("BoxShape3D_degrau3")
+
+[node name="Degrau4" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 6.75)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau4"]
+mesh = SubResource("BoxMesh_degrau4")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau4"]
+shape = SubResource("BoxShape3D_degrau4")
+
+[node name="Degrau5" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.875, 5.25)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau5"]
+mesh = SubResource("BoxMesh_degrau5")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau5"]
+shape = SubResource("BoxShape3D_degrau5")
+
+[node name="Degrau6" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 3.75)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau6"]
+mesh = SubResource("BoxMesh_degrau6")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau6"]
+shape = SubResource("BoxShape3D_degrau6")
+
+[node name="Degrau7" type="StaticBody3D" parent="Torre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.625, 2.25)
+
+[node name="Malha" type="MeshInstance3D" parent="Torre/Degrau7"]
+mesh = SubResource("BoxMesh_degrau7")
+
+[node name="Colisao" type="CollisionShape3D" parent="Torre/Degrau7"]
+shape = SubResource("BoxShape3D_degrau7")
 
 [node name="Jogador" parent="." instance=ExtResource("1_jogador")]

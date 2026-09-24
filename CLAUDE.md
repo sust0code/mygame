@@ -52,9 +52,15 @@ cenas/             -> arquivos .tscn (as "fases" e os "objetos montados")
 scripts/           -> arquivos .gd (o código em GDScript)
 ```
 
+Arquivos importantes:
+- `scripts/config_nocaute.gd` — **todos** os números de ajuste do nocaute
+  (força mínima, altura de queda, tempo atordoado). Mudar só ali.
+- `scripts/registro_de_eventos.gd` — autoload `RegistroDeEventos`, o
+  "caderninho" de eventos da partida.
+
 A pasta `.godot/` é gerada automaticamente pela Godot e não vai para o Git.
 A cena `cenas/principal.tscn` é, por enquanto, uma **área de testes** (chão,
-caixas, rampa e pilha), não uma fase do jogo final.
+caixas, rampa, pilha e torre laranja com escada), não uma fase do jogo final.
 
 ## Roteiro do projeto (etapas)
 
@@ -63,7 +69,7 @@ caixas, rampa e pilha), não uma fase do jogo final.
 2. **Pegar, carregar e arremessar** — objetos com física que o jogador agarra,
    segura na frente da câmera e arremessa. ✅ feita
 3. **Nocaute** — o jogador é nocauteado (vira um boneco mole, "ragdoll") e
-   depois se levanta. Não existe morte no jogo.
+   depois se levanta. Não existe morte no jogo. ✅ feita
 4. **Episódio 1 para um jogador** — "O Piloto": gincana de obstáculos infláveis
    e o chefe A Parede, com começo, meio e fim.
 5. **Multiplayer** — de 1 a 4 jogadores online na mesma partida.
@@ -91,6 +97,29 @@ caixas, rampa e pilha), não uma fase do jogo final.
   da câmera, com limite de rapidez que cai com o peso. É isso que faz um objeto
   pesado "ficar para trás" ao virar a câmera, dando a volta pelo lado de fora
   do jogador em vez de atravessá-lo.
+
+## Como o nocaute funciona (base para o multiplayer)
+
+- Não existe vida nem morte. O jogador tem um `estado`: `NORMAL`,
+  `NOCAUTEADO` ou `LEVANTANDO` (em `scripts/jogador.gd`).
+- Causas: batida de `ObjetoPegavel` (energia ½·massa·velocidade², só a parte
+  da velocidade na direção do jogador), queda alta, ou a tecla **K** de teste
+  (só funciona rodando pela Godot, em modo debug).
+- Quem avisa a batida é o **objeto** (`receber_impacto`); quem decide se cai
+  é o **jogador**. No multiplayer, só o dono do jogador deve decidir isso.
+- No nocaute, o jogador desliga a própria cápsula e cria um
+  `cenas/boneco_ragdoll.tscn` no cenário (partes `RigidBody3D` ligadas por
+  `ConeTwistJoint3D`). Ao levantar, volta para onde o tronco do boneco caiu.
+- Todo nocaute vira um evento no `RegistroDeEventos` com `tipo`, `jogador`,
+  `id_jogador`, `causa`, `fonte`, `forca_do_impacto`, `altura_da_queda`,
+  `tempo_atordoado`, `posicao` e `tempo`. A audiência e o replay (etapa 6)
+  devem **escutar o sinal `evento_registrado`**, e não mexer no jogador.
+
+## Testes automáticos
+
+Autoloads (como `RegistroDeEventos`) **não** existem quando um script roda
+com `godot -s`. Para testar o jogo, rodar o script de teste como autoload
+numa **cópia** do projeto (fora do repositório), com a cena principal aberta.
 
 O multiplayer só entra na etapa 5. Até lá, tudo é pensado para um jogador, mas
 sem decisões que atrapalhem o multiplayer depois.

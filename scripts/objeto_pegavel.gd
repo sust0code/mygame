@@ -32,6 +32,10 @@ var segurado_por: Array = []
 # objetos grandes um pouco mais longe da câmera.
 var raio: float = 0.5
 
+# Velocidade do objeto logo antes do último passo da física. Quando ele bate
+# em alguém, a velocidade já mudou; esta guarda como ele vinha.
+var _velocidade_antes_da_batida: Vector3 = Vector3.ZERO
+
 var _material_destaque: StandardMaterial3D
 var _amortecimento_angular_original: float
 var _gravidade: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -51,6 +55,19 @@ func _ready() -> void:
 	_material_destaque.albedo_color = Color(1.0, 0.95, 0.4, 0.35)
 
 	_amortecimento_angular_original = angular_damp
+
+	# Liga o "sensor de batidas": o sinal body_entered avisa quando o objeto
+	# encosta em outro corpo. Usamos isso para nocautear quem for atingido.
+	contact_monitor = true
+	max_contacts_reported = 4
+	body_entered.connect(_ao_encostar_em)
+
+
+# Encostou em alguém. Se for um jogador, avisa ele da batida; é o jogador
+# que decide se foi forte o bastante para cair (scripts/jogador.gd).
+func _ao_encostar_em(corpo: Node) -> void:
+	if corpo.has_method("receber_impacto"):
+		corpo.receber_impacto(self, _velocidade_antes_da_batida)
 
 
 # Liga ou desliga o destaque amarelo.
@@ -99,6 +116,8 @@ func ao_ser_solto(jogador: Node) -> void:
 
 # Roda 60 vezes por segundo. Só faz algo se alguém estiver segurando.
 func _physics_process(_delta: float) -> void:
+	_velocidade_antes_da_batida = linear_velocity
+
 	if segurado_por.is_empty():
 		return
 

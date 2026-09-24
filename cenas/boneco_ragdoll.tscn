@@ -1,0 +1,169 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/boneco_ragdoll.gd" id="1_boneco"]
+[ext_resource type="Script" path="res://scripts/estrelas_tontura.gd" id="2_estrelas"]
+
+[sub_resource type="StandardMaterial3D" id="Material_pele"]
+albedo_color = Color(1, 0.78, 0.6, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_camisa"]
+albedo_color = Color(0.95, 0.3, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_calca"]
+albedo_color = Color(0.25, 0.4, 0.9, 1)
+
+[sub_resource type="BoxMesh" id="Malha_Tronco"]
+material = SubResource("Material_camisa")
+size = Vector3(0.5, 0.6, 0.3)
+
+[sub_resource type="BoxShape3D" id="Forma_Tronco"]
+size = Vector3(0.5, 0.6, 0.3)
+
+[sub_resource type="BoxMesh" id="Malha_Cabeca"]
+material = SubResource("Material_pele")
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="BoxShape3D" id="Forma_Cabeca"]
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="BoxMesh" id="Malha_BracoEsquerdo"]
+material = SubResource("Material_camisa")
+size = Vector3(0.15, 0.6, 0.15)
+
+[sub_resource type="BoxShape3D" id="Forma_BracoEsquerdo"]
+size = Vector3(0.15, 0.6, 0.15)
+
+[sub_resource type="BoxMesh" id="Malha_BracoDireito"]
+material = SubResource("Material_camisa")
+size = Vector3(0.15, 0.6, 0.15)
+
+[sub_resource type="BoxShape3D" id="Forma_BracoDireito"]
+size = Vector3(0.15, 0.6, 0.15)
+
+[sub_resource type="BoxMesh" id="Malha_PernaEsquerda"]
+material = SubResource("Material_calca")
+size = Vector3(0.2, 0.75, 0.2)
+
+[sub_resource type="BoxShape3D" id="Forma_PernaEsquerda"]
+size = Vector3(0.2, 0.75, 0.2)
+
+[sub_resource type="BoxMesh" id="Malha_PernaDireita"]
+material = SubResource("Material_calca")
+size = Vector3(0.2, 0.75, 0.2)
+
+[sub_resource type="BoxShape3D" id="Forma_PernaDireita"]
+size = Vector3(0.2, 0.75, 0.2)
+
+[node name="BonecoRagdoll" type="Node3D"]
+script = ExtResource("1_boneco")
+
+[node name="Tronco" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+mass = 30.0
+linear_damp = 0.1
+angular_damp = 0.8
+
+[node name="Malha" type="MeshInstance3D" parent="Tronco"]
+mesh = SubResource("Malha_Tronco")
+
+[node name="Colisao" type="CollisionShape3D" parent="Tronco"]
+shape = SubResource("Forma_Tronco")
+
+[node name="Cabeca" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+mass = 5.0
+linear_damp = 0.1
+angular_damp = 0.8
+
+[node name="Malha" type="MeshInstance3D" parent="Cabeca"]
+mesh = SubResource("Malha_Cabeca")
+
+[node name="Colisao" type="CollisionShape3D" parent="Cabeca"]
+shape = SubResource("Forma_Cabeca")
+
+[node name="BracoEsquerdo" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 1.1, 0)
+mass = 4.0
+linear_damp = 0.1
+angular_damp = 0.8
+
+[node name="Malha" type="MeshInstance3D" parent="BracoEsquerdo"]
+mesh = SubResource("Malha_BracoEsquerdo")
+
+[node name="Colisao" type="CollisionShape3D" parent="BracoEsquerdo"]
+shape = SubResource("Forma_BracoEsquerdo")
+
+[node name="BracoDireito" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 1.1, 0)
+mass = 4.0
+linear_damp = 0.1
+angular_damp = 0.8
+
+[node name="Malha" type="MeshInstance3D" parent="BracoDireito"]
+mesh = SubResource("Malha_BracoDireito")
+
+[node name="Colisao" type="CollisionShape3D" parent="BracoDireito"]
+shape = SubResource("Forma_BracoDireito")
+
+[node name="PernaEsquerda" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13, 0.4, 0)
+mass = 8.0
+linear_damp = 0.1
+angular_damp = 0.8
+
+[node name="Malha" type="MeshInstance3D" parent="PernaEsquerda"]
+mesh = SubResource("Malha_PernaEsquerda")
+
+[node name="Colisao" type="CollisionShape3D" parent="PernaEsquerda"]
+shape = SubResource("Forma_PernaEsquerda")
+
+[node name="PernaDireita" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.4, 0)
+mass = 8.0
+linear_damp = 0.1
+angular_damp = 0.8
+
+[node name="Malha" type="MeshInstance3D" parent="PernaDireita"]
+mesh = SubResource("Malha_PernaDireita")
+
+[node name="Colisao" type="CollisionShape3D" parent="PernaDireita"]
+shape = SubResource("Forma_PernaDireita")
+
+[node name="Pescoco" type="ConeTwistJoint3D" parent="."]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 1.425, 0)
+node_a = NodePath("../Tronco")
+node_b = NodePath("../Cabeca")
+swing_span = 0.698132
+twist_span = 0.785398
+
+[node name="OmbroEsquerdo" type="ConeTwistJoint3D" parent="."]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, -0.35, 1.38, 0)
+node_a = NodePath("../Tronco")
+node_b = NodePath("../BracoEsquerdo")
+swing_span = 1.396263
+twist_span = 1.047198
+
+[node name="OmbroDireito" type="ConeTwistJoint3D" parent="."]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0.35, 1.38, 0)
+node_a = NodePath("../Tronco")
+node_b = NodePath("../BracoDireito")
+swing_span = 1.396263
+twist_span = 1.047198
+
+[node name="QuadrilEsquerdo" type="ConeTwistJoint3D" parent="."]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, -0.13, 0.79, 0)
+node_a = NodePath("../Tronco")
+node_b = NodePath("../PernaEsquerda")
+swing_span = 0.872665
+twist_span = 0.349066
+
+[node name="QuadrilDireito" type="ConeTwistJoint3D" parent="."]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0.13, 0.79, 0)
+node_a = NodePath("../Tronco")
+node_b = NodePath("../PernaDireita")
+swing_span = 0.872665
+twist_span = 0.349066
+
+[node name="Estrelas" type="Node3D" parent="." node_paths=PackedStringArray("seguir")]
+script = ExtResource("2_estrelas")
+seguir = NodePath("../Cabeca")
