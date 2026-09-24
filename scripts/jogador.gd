@@ -16,10 +16,14 @@ extends CharacterBody3D
 ## Distância (em metros) entre a câmera e o objeto segurado.
 @export var distancia_de_segurar: float = 1.2
 ## Velocidade do arremesso mais fraco e do mais forte (metros por segundo).
-@export var arremesso_minimo: float = 3.0
-@export var arremesso_maximo: float = 16.0
+@export var arremesso_minimo: float = 2.25
+@export var arremesso_maximo: float = 12.0
 ## Quantos segundos segurando o botão para chegar na força máxima.
 @export var tempo_de_carga: float = 1.2
+## Rapidez máxima para girar um objeto leve ao redor do corpo (em "radianos
+## por segundo"; 6,28 = uma volta inteira). Objetos pesados giram bem mais
+## devagar que isso: é o que faz eles "ficarem para trás" ao virar a câmera.
+@export var giro_maximo_com_objeto: float = 8.0
 ## Força com que o jogador empurra caixas ao esbarrar nelas andando.
 @export var forca_de_empurrao: float = 2.0
 
@@ -33,6 +37,10 @@ var objeto_segurado: ObjetoPegavel = null
 # Carga do arremesso: vai de 0 (nada) até 1 (força máxima).
 var carga: float = 0.0
 var carregando_arremesso: bool = false
+# Direção em que o objeto segurado está agora, em volta do jogador. Ela vai
+# girando aos poucos até a direção da câmera: rápido com objeto leve,
+# devagar com objeto pesado.
+var direcao_de_segurar: Vector3 = Vector3.FORWARD
 
 # "Cabeca" é o nó que segura a câmera. Giramos ele para olhar para cima e para baixo.
 @onready var cabeca: Node3D = $Cabeca
@@ -96,6 +104,7 @@ func _unhandled_input(evento: InputEvent) -> void:
 # "delta" é o tempo (em segundos) desde a última vez que essa função rodou.
 func _physics_process(delta: float) -> void:
 	_atualizar_mira()
+	_atualizar_direcao_de_segurar(delta)
 
 	# Enquanto o botão está apertado, a carga sobe até 1.
 	if carregando_arremesso:
@@ -140,6 +149,12 @@ func _physics_process(delta: float) -> void:
 
 func pegar_objeto(objeto: ObjetoPegavel) -> void:
 	objeto_segurado = objeto
+	# O objeto começa a ser puxado a partir da direção em que ele está agora
+	# (e não já na frente da câmera). Assim, um objeto pesado que estava de
+	# lado demora um pouco para vir para a frente.
+	var para_o_objeto := objeto.global_position - camera.global_position
+	if para_o_objeto.length() > 0.01:
+		direcao_de_segurar = para_o_objeto.normalized()
 	objeto.ao_ser_pego(self)
 	# O objeto segurado não bate no próprio jogador. Sem isso, ele empurraria
 	# o personagem para trás, ou daria para "subir" nele e sair voando.
@@ -170,11 +185,12 @@ func arremessar() -> void:
 
 
 # O objeto pergunta ao jogador: "onde você quer que eu fique?"
-# Resposta: um pouco à frente da câmera. Objetos grandes ficam mais longe,
-# e enquanto carrega o arremesso o objeto vem um pouco para trás.
+# Resposta: um pouco à frente do jogador, na "direcao_de_segurar" (que vai
+# alcançando a câmera aos poucos). Objetos grandes ficam mais longe, e
+# enquanto carrega o arremesso o objeto vem um pouco para trás.
 func ponto_de_segurar(objeto: ObjetoPegavel) -> Vector3:
 	var distancia := distancia_de_segurar + objeto.raio - carga * 0.4
-	return camera.global_position - camera.global_transform.basis.z * distancia
+	return camera.global_position + direcao_de_segurar * distancia
 
 
 # ---------------------------------------------------------------------------
@@ -195,6 +211,27 @@ func _atualizar_mira() -> void:
 		objeto_na_mira = novo
 		if objeto_na_mira != null:
 			objeto_na_mira.destacar(true)
+
+
+# Gira a "direcao_de_segurar" em direção à câmera, com um limite de rapidez
+# que depende do peso. Com peso, o limite cai muito: a caixa de 45 kg leva
+# cerca de 1 segundo para dar um quarto de volta ao redor do jogador.
+func _atualizar_direcao_de_segurar(delta: float) -> void:
+	var frente_da_camera := -camera.global_transform.basis.z
+	if objeto_segurado == null:
+		direcao_de_segurar = frente_da_camera
+		return
+
+	var fator := objeto_segurado.fator_de_forca()
+	# fator * fator: o peso pesa ainda mais no giro do que na subida.
+	# O mínimo de 0,3 evita que um objeto enorme fique totalmente travado.
+	var giro_permitido := maxf(giro_maximo_com_objeto * fator * fator, 0.3) * delta
+	var angulo := direcao_de_segurar.angle_to(frente_da_camera)
+	if angulo <= giro_permitido:
+		direcao_de_segurar = frente_da_camera
+	else:
+		# "slerp" gira uma direção em direção a outra, pelo caminho curvo.
+		direcao_de_segurar = direcao_de_segurar.slerp(frente_da_camera, giro_permitido / angulo)
 
 
 # Não deixa pegar a caixa em que o jogador está em cima.

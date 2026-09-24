@@ -87,6 +87,10 @@ caixas, rampa e pilha), não uma fase do jogo final.
   levantar. Com menos gente, o objeto só é arrastado pelo chão.
 - Cada jogador tem `forca` (kg que carrega bem). Peso acima disso deixa o
   jogador lento, faz o objeto pender e diminui a força do arremesso.
+- Cada jogador tem uma `direcao_de_segurar`, que gira aos poucos até a direção
+  da câmera, com limite de rapidez que cai com o peso. É isso que faz um objeto
+  pesado "ficar para trás" ao virar a câmera, dando a volta pelo lado de fora
+  do jogador em vez de atravessá-lo.
 
 O multiplayer só entra na etapa 5. Até lá, tudo é pensado para um jogador, mas
 sem decisões que atrapalhem o multiplayer depois.
