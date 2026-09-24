@@ -49,7 +49,9 @@ Consulte-o antes de criar qualquer fase ou sistema novo.
 project.godot      -> configuração do projeto (nome, cena inicial, controles)
 GDD.md             -> documento de design do jogo (o "roteiro" criativo)
 cenas/             -> arquivos .tscn (as "fases" e os "objetos montados")
+cenas/obstaculos/  -> obstáculos reaproveitáveis (plataforma, rolo, bola...)
 scripts/           -> arquivos .gd (o código em GDScript)
+scripts/obstaculos/-> o código de cada obstáculo
 ```
 
 Arquivos importantes:
@@ -57,10 +59,14 @@ Arquivos importantes:
   (força mínima, altura de queda, tempo atordoado). Mudar só ali.
 - `scripts/registro_de_eventos.gd` — autoload `RegistroDeEventos`, o
   "caderninho" de eventos da partida.
+- `scripts/falas_do_apresentador.gd` — **todas** as falas do Gilberto Glamour,
+  separadas por momento. Frases novas entram só ali.
 
 A pasta `.godot/` é gerada automaticamente pela Godot e não vai para o Git.
-A cena `cenas/principal.tscn` é, por enquanto, uma **área de testes** (chão,
-caixas, rampa, pilha e torre laranja com escada), não uma fase do jogo final.
+A cena inicial (F5) é `cenas/episodio_1.tscn` (Episódio 1 – O Piloto).
+A cena `cenas/principal.tscn` é uma **área de testes** (chão, caixas, rampa,
+pilha e torre laranja com escada), não uma fase do jogo final. Para abri-la:
+duplo clique nela no painel Sistema de Arquivos e F6 ("rodar cena atual").
 
 ## Roteiro do projeto (etapas)
 
@@ -71,7 +77,11 @@ caixas, rampa, pilha e torre laranja com escada), não uma fase do jogo final.
 3. **Nocaute** — o jogador é nocauteado (vira um boneco mole, "ragdoll") e
    depois se levanta. Não existe morte no jogo. ✅ feita
 4. **Episódio 1 para um jogador** — "O Piloto": gincana de obstáculos infláveis
-   e o chefe A Parede, com começo, meio e fim.
+   e o chefe A Parede, com começo, meio e fim. Dividida em partes:
+   - 4A: estúdio, gincana de obstáculos, checkpoints, cronômetro, chegada e
+     falas do apresentador. ✅ feita
+   - 4B: chefe A Parede.
+   - 4C: acabamento do episódio (a definir).
 5. **Multiplayer** — de 1 a 4 jogadores online na mesma partida.
 6. **Sistemas do programa** — medidor de audiência, chat de voz por proximidade,
    provas com microfone e replay automático dos melhores momentos.
@@ -115,11 +125,32 @@ caixas, rampa, pilha e torre laranja com escada), não uma fase do jogo final.
   `tempo_atordoado`, `posicao` e `tempo`. A audiência e o replay (etapa 6)
   devem **escutar o sinal `evento_registrado`**, e não mexer no jogador.
 
+## Pista, pontos de controle e apresentador
+
+- Qualquer coisa que derruba chama `jogador.receber_impacto(fonte, massa,
+  velocidade, posicao_da_fonte)` (caixas, bola gigante, rolo giratório).
+- Cair abaixo de `altura_limite` (padrão -10) leva o jogador ao
+  `ponto_de_retorno` (começa onde ele nasceu; `cenas/ponto_de_controle.tscn`
+  troca). Se o **boneco** do nocaute cair, também volta. Gera o evento
+  `caiu_da_pista`.
+- Terrenos especiais são `ZonaDeTerreno` (Area3D) com `escorregadia` e
+  `multiplicador_de_velocidade`; quem aplica o efeito é o jogador.
+- O apresentador (`cenas/apresentador.tscn`) e a plateia **só escutam** o
+  sinal `evento_registrado`. Tipos de evento usados: `inicio_do_episodio`,
+  `inicio_da_prova`, `nocaute`, `caiu_da_pista`, `checkpoint`, `chegada`.
+- Camadas de colisão: 1 = mundo, jogador e objetos; 3 (valor 4) = bolinhas
+  da piscina (o jogador não enxerga essa camada, as bolinhas enxergam ele).
+- Em `AnimatableBody3D`, trocar posição e rotação **juntas** (um
+  `transform` só). Trocar separado faz a Godot perder a posição.
+
 ## Testes automáticos
 
 Autoloads (como `RegistroDeEventos`) **não** existem quando um script roda
 com `godot -s`. Para testar o jogo, rodar o script de teste como autoload
-numa **cópia** do projeto (fora do repositório), com a cena principal aberta.
+numa **cópia** do projeto (fora do repositório), com a cena a testar como
+cena inicial. Os testes de cada etapa simulam teclas e conferem números
+(posição, velocidade, eventos); rodar os das etapas anteriores de novo antes
+de entregar, para garantir que nada quebrou.
 
 O multiplayer só entra na etapa 5. Até lá, tudo é pensado para um jogador, mas
 sem decisões que atrapalhem o multiplayer depois.

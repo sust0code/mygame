@@ -6,7 +6,7 @@ config_version=5
 [application]
 
 config/name="Ao Vivo e Sem Ensaio"
-run/main_scene="res://cenas/principal.tscn"
+run/main_scene="res://cenas/episodio_1.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]

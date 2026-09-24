@@ -65,9 +65,10 @@ func _ready() -> void:
 
 # Encostou em alguém. Se for um jogador, avisa ele da batida; é o jogador
 # que decide se foi forte o bastante para cair (scripts/jogador.gd).
+# Quem está segurando o objeto não é avisado (senão cairia com a própria caixa).
 func _ao_encostar_em(corpo: Node) -> void:
-	if corpo.has_method("receber_impacto"):
-		corpo.receber_impacto(self, _velocidade_antes_da_batida)
+	if corpo.has_method("receber_impacto") and not corpo in segurado_por:
+		corpo.receber_impacto(nome_exibido, mass, _velocidade_antes_da_batida, global_position)
 
 
 # Liga ou desliga o destaque amarelo.

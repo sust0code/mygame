@@ -1,0 +1,788 @@
+[gd_scene load_steps=95 format=3]
+
+[ext_resource type="Script" path="res://scripts/episodio_1.gd" id="1_episodio_1"]
+[ext_resource type="PackedScene" path="res://cenas/jogador.tscn" id="2_jogador"]
+[ext_resource type="PackedScene" path="res://cenas/obstaculos/plataforma_balancando.tscn" id="3_plataforma_balancando"]
+[ext_resource type="PackedScene" path="res://cenas/obstaculos/rolo_giratorio.tscn" id="4_rolo_giratorio"]
+[ext_resource type="PackedScene" path="res://cenas/obstaculos/lancador_de_bolas.tscn" id="5_lancador_de_bolas"]
+[ext_resource type="PackedScene" path="res://cenas/ponto_de_controle.tscn" id="6_ponto_de_controle"]
+[ext_resource type="PackedScene" path="res://cenas/apresentador.tscn" id="7_apresentador"]
+[ext_resource type="Script" path="res://scripts/obstaculos/ralo_de_bolas.gd" id="8_ralo_de_bolas"]
+[ext_resource type="Script" path="res://scripts/zona_de_terreno.gd" id="9_zona_de_terreno"]
+[ext_resource type="Script" path="res://scripts/obstaculos/piscina_de_bolinhas.gd" id="10_piscina_de_bolinhas"]
+[ext_resource type="Script" path="res://scripts/plateia.gd" id="11_plateia"]
+
+[sub_resource type="Environment" id="Environment_1"]
+background_mode = 1
+background_color = Color(0.06, 0.03, 0.12, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.55, 0.5, 0.7, 1)
+ambient_light_energy = 0.7
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="Material_1"]
+albedo_color = Color(0.1, 0.45, 0.95, 1)
+
+[sub_resource type="PlaneMesh" id="Malha_1"]
+material = SubResource("Material_1")
+size = Vector2(70, 180)
+
+[sub_resource type="StandardMaterial3D" id="Material_2"]
+albedo_color = Color(0.3, 0.12, 0.5, 1)
+
+[sub_resource type="BoxMesh" id="Malha_2"]
+material = SubResource("Material_2")
+size = Vector3(1, 16, 160)
+
+[sub_resource type="StandardMaterial3D" id="Material_3"]
+albedo_color = Color(1, 0.3, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="Malha_3"]
+material = SubResource("Material_3")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_4"]
+albedo_color = Color(0.2, 0.6, 1, 1)
+
+[sub_resource type="BoxMesh" id="Malha_4"]
+material = SubResource("Material_4")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_5"]
+albedo_color = Color(1, 0.85, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="Malha_5"]
+material = SubResource("Material_5")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_6"]
+albedo_color = Color(0.35, 0.9, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="Malha_6"]
+material = SubResource("Material_6")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_7"]
+albedo_color = Color(1, 0.55, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="Malha_7"]
+material = SubResource("Material_7")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_8"]
+albedo_color = Color(0.75, 0.4, 1, 1)
+
+[sub_resource type="BoxMesh" id="Malha_8"]
+material = SubResource("Material_8")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_9"]
+albedo_color = Color(1, 0.3, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="Malha_9"]
+material = SubResource("Material_9")
+size = Vector3(0.4, 3, 18)
+
+[sub_resource type="BoxMesh" id="Malha_10"]
+material = SubResource("Material_2")
+size = Vector3(44, 18, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_10"]
+albedo_color = Color(0.25, 0.25, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="Malha_11"]
+material = SubResource("Material_10")
+size = Vector3(8, 4, 122)
+
+[sub_resource type="BoxMesh" id="Malha_12"]
+material = SubResource("Material_10")
+size = Vector3(6.4, 4.8, 122)
+
+[sub_resource type="BoxMesh" id="Malha_13"]
+material = SubResource("Material_10")
+size = Vector3(4.8, 5.6, 122)
+
+[sub_resource type="BoxMesh" id="Malha_14"]
+material = SubResource("Material_10")
+size = Vector3(3.2, 6.4, 122)
+
+[sub_resource type="BoxMesh" id="Malha_15"]
+material = SubResource("Material_10")
+size = Vector3(1.6, 7.2, 122)
+
+[sub_resource type="StandardMaterial3D" id="Material_11"]
+albedo_color = Color(0.35, 0.35, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="Malha_16"]
+material = SubResource("Material_11")
+size = Vector3(0.5, 0.5, 150)
+
+[sub_resource type="CylinderMesh" id="Malha_17"]
+material = SubResource("Material_11")
+top_radius = 0.45
+bottom_radius = 0.6
+height = 0.9
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="Material_12"]
+albedo_color = Color(1, 0.35, 0.45, 1)
+
+[sub_resource type="BoxMesh" id="Malha_18"]
+material = SubResource("Material_12")
+size = Vector3(8, 1, 10)
+
+[sub_resource type="BoxShape3D" id="Forma_1"]
+size = Vector3(8, 1, 10)
+
+[sub_resource type="StandardMaterial3D" id="Material_13"]
+albedo_color = Color(0.2, 0.8, 0.9, 1)
+
+[sub_resource type="BoxMesh" id="Malha_19"]
+material = SubResource("Material_13")
+size = Vector3(8, 1, 8)
+
+[sub_resource type="BoxShape3D" id="Forma_2"]
+size = Vector3(8, 1, 8)
+
+[sub_resource type="StandardMaterial3D" id="Material_14"]
+albedo_color = Color(1, 0.85, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="Malha_20"]
+material = SubResource("Material_14")
+size = Vector3(8, 1, 20)
+
+[sub_resource type="BoxShape3D" id="Forma_3"]
+size = Vector3(8, 1, 20)
+
+[sub_resource type="StandardMaterial3D" id="Material_15"]
+albedo_color = Color(0.35, 0.9, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="Malha_21"]
+material = SubResource("Material_15")
+size = Vector3(8, 1, 6)
+
+[sub_resource type="BoxShape3D" id="Forma_4"]
+size = Vector3(8, 1, 6)
+
+[sub_resource type="StandardMaterial3D" id="Material_16"]
+albedo_color = Color(0.95, 0.5, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="Malha_22"]
+material = SubResource("Material_16")
+size = Vector3(8, 0.5, 24.5153)
+
+[sub_resource type="BoxShape3D" id="Forma_5"]
+size = Vector3(8, 0.5, 24.5153)
+
+[sub_resource type="StandardMaterial3D" id="Material_17"]
+albedo_color = Color(0.95, 0.95, 0.95, 1)
+
+[sub_resource type="BoxMesh" id="Malha_23"]
+material = SubResource("Material_17")
+size = Vector3(0.3, 0.8, 24.5153)
+
+[sub_resource type="BoxShape3D" id="Forma_6"]
+size = Vector3(0.3, 0.8, 24.5153)
+
+[sub_resource type="BoxShape3D" id="Forma_7"]
+size = Vector3(8, 3, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_18"]
+albedo_color = Color(1, 0.6, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="Malha_24"]
+material = SubResource("Material_18")
+size = Vector3(8, 1, 8)
+
+[sub_resource type="BoxShape3D" id="Forma_8"]
+size = Vector3(8, 1, 8)
+
+[sub_resource type="StandardMaterial3D" id="Material_19"]
+albedo_color = Color(0.6, 0.95, 1, 1)
+roughness = 0.1
+metallic_specular = 1.0
+
+[sub_resource type="BoxMesh" id="Malha_25"]
+material = SubResource("Material_19")
+size = Vector3(4, 0.5, 19.0815)
+
+[sub_resource type="BoxShape3D" id="Forma_9"]
+size = Vector3(4, 0.5, 19.0815)
+
+[sub_resource type="BoxShape3D" id="Forma_10"]
+size = Vector3(4, 1.6, 19.0815)
+
+[sub_resource type="StandardMaterial3D" id="Material_20"]
+albedo_color = Color(0.95, 0.95, 1, 1)
+
+[sub_resource type="BoxMesh" id="Malha_26"]
+material = SubResource("Material_20")
+size = Vector3(8, 0.5, 12)
+
+[sub_resource type="BoxShape3D" id="Forma_11"]
+size = Vector3(8, 0.5, 12)
+
+[sub_resource type="StandardMaterial3D" id="Material_21"]
+albedo_color = Color(1, 0.45, 0.75, 1)
+
+[sub_resource type="BoxMesh" id="Malha_27"]
+material = SubResource("Material_21")
+size = Vector3(0.3, 0.9, 12)
+
+[sub_resource type="BoxShape3D" id="Forma_12"]
+size = Vector3(0.3, 0.9, 12)
+
+[sub_resource type="StandardMaterial3D" id="Material_22"]
+albedo_color = Color(1, 0.45, 0.75, 1)
+
+[sub_resource type="BoxMesh" id="Malha_28"]
+material = SubResource("Material_22")
+size = Vector3(0.3, 0.9, 12)
+
+[sub_resource type="BoxShape3D" id="Forma_13"]
+size = Vector3(0.3, 0.9, 12)
+
+[sub_resource type="StandardMaterial3D" id="Material_23"]
+albedo_color = Color(1, 0.45, 0.75, 1)
+
+[sub_resource type="BoxMesh" id="Malha_29"]
+material = SubResource("Material_23")
+size = Vector3(8.6, 0.6, 0.3)
+
+[sub_resource type="BoxShape3D" id="Forma_14"]
+size = Vector3(8.6, 0.6, 0.3)
+
+[sub_resource type="BoxShape3D" id="Forma_15"]
+size = Vector3(7.8, 2, 11.6)
+
+[sub_resource type="StandardMaterial3D" id="Material_24"]
+albedo_color = Color(0.75, 0.4, 1, 1)
+
+[sub_resource type="BoxMesh" id="Malha_30"]
+material = SubResource("Material_24")
+size = Vector3(8, 1, 12)
+
+[sub_resource type="BoxShape3D" id="Forma_16"]
+size = Vector3(8, 1, 12)
+
+[sub_resource type="BoxShape3D" id="Forma_17"]
+size = Vector3(8, 4, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_25"]
+albedo_color = Color(0.95, 0.95, 0.95, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_26"]
+albedo_color = Color(0.2, 0.6, 1, 1)
+
+[sub_resource type="BoxMesh" id="Malha_31"]
+material = SubResource("Material_25")
+size = Vector3(0.4, 4.6, 0.4)
+
+[sub_resource type="BoxMesh" id="Malha_32"]
+material = SubResource("Material_26")
+size = Vector3(9, 1.1, 0.4)
+
+[sub_resource type="BoxMesh" id="Malha_33"]
+material = SubResource("Material_25")
+size = Vector3(8, 0.02, 0.5)
+
+[sub_resource type="BoxShape3D" id="Forma_18"]
+size = Vector3(8, 4, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_27"]
+albedo_color = Color(0.95, 0.95, 0.95, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_28"]
+albedo_color = Color(1, 0.3, 0.4, 1)
+
+[sub_resource type="BoxMesh" id="Malha_34"]
+material = SubResource("Material_27")
+size = Vector3(0.4, 4.6, 0.4)
+
+[sub_resource type="BoxMesh" id="Malha_35"]
+material = SubResource("Material_28")
+size = Vector3(9, 1.1, 0.4)
+
+[sub_resource type="BoxMesh" id="Malha_36"]
+material = SubResource("Material_27")
+size = Vector3(8, 0.02, 0.5)
+
+[node name="Episodio1" type="Node3D"]
+script = ExtResource("1_episodio_1")
+
+[node name="Ambiente" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1")
+
+[node name="LuzGeral" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 20, 0)
+light_energy = 0.6
+shadow_enabled = true
+
+[node name="Estudio" type="Node3D" parent="."]
+
+[node name="Agua" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, -65)
+mesh = SubResource("Malha_1")
+
+[node name="ParedeEsquerda" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 4, -65)
+mesh = SubResource("Malha_2")
+
+[node name="FaixaColorida1" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 5, -5)
+mesh = SubResource("Malha_3")
+
+[node name="FaixaColorida2" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 8, -25)
+mesh = SubResource("Malha_4")
+
+[node name="FaixaColorida3" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 5, -45)
+mesh = SubResource("Malha_5")
+
+[node name="FaixaColorida4" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 8, -65)
+mesh = SubResource("Malha_6")
+
+[node name="FaixaColorida5" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 5, -85)
+mesh = SubResource("Malha_7")
+
+[node name="FaixaColorida6" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 8, -105)
+mesh = SubResource("Malha_8")
+
+[node name="FaixaColorida7" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3, 5, -125)
+mesh = SubResource("Malha_9")
+
+[node name="ParedeDoFundo" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -143)
+mesh = SubResource("Malha_10")
+
+[node name="ParedeDeTras" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 9)
+mesh = SubResource("Malha_10")
+
+[node name="Letreiro" type="Label3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, -142.4)
+pixel_size = 0.02
+text = "AO VIVO E SEM ENSAIO"
+font_size = 160
+modulate = Color(1, 0.85, 0.2, 1)
+outline_size = 24
+
+[node name="AoVivo" type="Label3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, -142.4)
+pixel_size = 0.02
+text = "AO VIVO"
+font_size = 110
+modulate = Color(1, 0.2, 0.2, 1)
+outline_size = 20
+
+[node name="Degrau1" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, -2, -65)
+mesh = SubResource("Malha_11")
+
+[node name="Degrau2" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.8, -1.6, -65)
+mesh = SubResource("Malha_12")
+
+[node name="Degrau3" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.6, -1.2, -65)
+mesh = SubResource("Malha_13")
+
+[node name="Degrau4" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.4, -0.8, -65)
+mesh = SubResource("Malha_14")
+
+[node name="Degrau5" type="MeshInstance3D" parent="Estudio"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.2, -0.4, -65)
+mesh = SubResource("Malha_15")
+
+[node name="Plateia" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, -0.8, -5)
+script = ExtResource("11_plateia")
+
+[node name="Holofotes" type="Node3D" parent="."]
+
+[node name="Viga" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, -65)
+mesh = SubResource("Malha_16")
+
+[node name="Holofote1" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, 0)
+light_color = Color(1, 0.4, 0.7, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata1" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, 0)
+mesh = SubResource("Malha_17")
+
+[node name="Holofote2" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, -20)
+light_color = Color(0.4, 0.8, 1, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata2" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, -20)
+mesh = SubResource("Malha_17")
+
+[node name="Holofote3" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, -40)
+light_color = Color(1, 0.9, 0.5, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata3" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, -40)
+mesh = SubResource("Malha_17")
+
+[node name="Holofote4" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, -60)
+light_color = Color(0.6, 1, 0.5, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata4" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, -60)
+mesh = SubResource("Malha_17")
+
+[node name="Holofote5" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, -80)
+light_color = Color(1, 0.6, 0.3, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata5" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, -80)
+mesh = SubResource("Malha_17")
+
+[node name="Holofote6" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, -100)
+light_color = Color(0.8, 0.5, 1, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata6" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, -100)
+mesh = SubResource("Malha_17")
+
+[node name="Holofote7" type="SpotLight3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 6.12323e-17, 1, 0, -1, 6.12323e-17, 0, 14, -120)
+light_color = Color(1, 1, 1, 1)
+light_energy = 10.0
+spot_range = 24.0
+spot_angle = 42.0
+
+[node name="Lata7" type="MeshInstance3D" parent="Holofotes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, -120)
+mesh = SubResource("Malha_17")
+
+[node name="Pista" type="Node3D" parent="."]
+
+[node name="Largada" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -5)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/Largada"]
+mesh = SubResource("Malha_18")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/Largada"]
+shape = SubResource("Forma_1")
+
+[node name="PlataformaBalancando1" parent="Pista" instance=ExtResource("3_plataforma_balancando")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13)
+fase = 0.0
+
+[node name="PlataformaBalancando2" parent="Pista" instance=ExtResource("3_plataforma_balancando")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
+fase = 2.1
+
+[node name="PlataformaBalancando3" parent="Pista" instance=ExtResource("3_plataforma_balancando")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -23)
+fase = 4.2
+
+[node name="AreaDoPontoDeControle1" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -30)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/AreaDoPontoDeControle1"]
+mesh = SubResource("Malha_19")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/AreaDoPontoDeControle1"]
+shape = SubResource("Forma_2")
+
+[node name="PistaDosRolos" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -44)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/PistaDosRolos"]
+mesh = SubResource("Malha_20")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/PistaDosRolos"]
+shape = SubResource("Forma_3")
+
+[node name="Rolo1" parent="Pista" instance=ExtResource("4_rolo_giratorio")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -39)
+
+[node name="Rolo2" parent="Pista" instance=ExtResource("4_rolo_giratorio")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -49)
+velocidade_de_giro = -1.9
+
+[node name="AreaDoPontoDeControle2" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -57)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/AreaDoPontoDeControle2"]
+mesh = SubResource("Malha_21")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/AreaDoPontoDeControle2"]
+shape = SubResource("Forma_4")
+
+[node name="RampaDasBolas" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 0.97898, -0.203954, 0, 0.203954, 0.97898, 0, 2.5, -72)
+
+[node name="Piso" type="MeshInstance3D" parent="Pista/RampaDasBolas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("Malha_22")
+
+[node name="ColisaoDoPiso" type="CollisionShape3D" parent="Pista/RampaDasBolas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("Forma_5")
+
+[node name="GradeEsquerda" type="MeshInstance3D" parent="Pista/RampaDasBolas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.85, 0.4, 0)
+mesh = SubResource("Malha_23")
+
+[node name="ColisaoDaGradeEsquerda" type="CollisionShape3D" parent="Pista/RampaDasBolas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.85, 0.4, 0)
+shape = SubResource("Forma_6")
+
+[node name="GradeDireita" type="MeshInstance3D" parent="Pista/RampaDasBolas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.85, 0.4, 0)
+mesh = SubResource("Malha_23")
+
+[node name="ColisaoDaGradeDireita" type="CollisionShape3D" parent="Pista/RampaDasBolas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.85, 0.4, 0)
+shape = SubResource("Forma_6")
+
+[node name="LancadorDeBolas" parent="Pista" instance=ExtResource("5_lancador_de_bolas")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, -82.5)
+intervalo = 1.8
+largura = 5.0
+
+[node name="RaloDeBolas" type="Area3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -61)
+script = ExtResource("8_ralo_de_bolas")
+
+[node name="Forma" type="CollisionShape3D" parent="Pista/RaloDeBolas"]
+shape = SubResource("Forma_7")
+
+[node name="Topo" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, -88)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/Topo"]
+mesh = SubResource("Malha_24")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/Topo"]
+shape = SubResource("Forma_8")
+
+[node name="RampaEscorregadia" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(0.99863, -0.052336, 0, 0.0504266, 0.962197, 0.267644, -0.0140074, -0.267277, 0.963518, 0, 2.5, -101)
+
+[node name="Piso" type="MeshInstance3D" parent="Pista/RampaEscorregadia"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("Malha_25")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/RampaEscorregadia"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("Forma_9")
+
+[node name="ZonaEscorregadia" type="Area3D" parent="Pista/RampaEscorregadia"]
+script = ExtResource("9_zona_de_terreno")
+escorregadia = true
+
+[node name="Forma" type="CollisionShape3D" parent="Pista/RampaEscorregadia/ZonaEscorregadia"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("Forma_10")
+
+[node name="FundoDaPiscina" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.85, -116)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/FundoDaPiscina"]
+mesh = SubResource("Malha_26")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/FundoDaPiscina"]
+shape = SubResource("Forma_11")
+
+[node name="BordaEsquerda" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.15, -0.15, -116)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/BordaEsquerda"]
+mesh = SubResource("Malha_27")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/BordaEsquerda"]
+shape = SubResource("Forma_12")
+
+[node name="BordaDireita" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.15, -0.15, -116)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/BordaDireita"]
+mesh = SubResource("Malha_28")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/BordaDireita"]
+shape = SubResource("Forma_13")
+
+[node name="BordaDaFrente" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, -110.15)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/BordaDaFrente"]
+mesh = SubResource("Malha_29")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/BordaDaFrente"]
+shape = SubResource("Forma_14")
+
+[node name="PiscinaDeBolinhas" type="Node3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, -116.15)
+script = ExtResource("10_piscina_de_bolinhas")
+
+[node name="ZonaDaPiscina" type="Area3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -116.15)
+script = ExtResource("9_zona_de_terreno")
+multiplicador_de_velocidade = 0.55
+
+[node name="Forma" type="CollisionShape3D" parent="Pista/ZonaDaPiscina"]
+shape = SubResource("Forma_15")
+
+[node name="Chegada" type="StaticBody3D" parent="Pista"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -128)
+
+[node name="Malha" type="MeshInstance3D" parent="Pista/Chegada"]
+mesh = SubResource("Malha_30")
+
+[node name="Colisao" type="CollisionShape3D" parent="Pista/Chegada"]
+shape = SubResource("Forma_16")
+
+[node name="PontosDeControle" type="Node3D" parent="."]
+
+[node name="PontoDeControle1" parent="PontosDeControle" instance=ExtResource("6_ponto_de_controle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -29)
+numero = 1
+
+[node name="PontoDeControle2" parent="PontosDeControle" instance=ExtResource("6_ponto_de_controle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -57)
+numero = 2
+
+[node name="PontoDeControle3" parent="PontosDeControle" instance=ExtResource("6_ponto_de_controle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -87)
+numero = 3
+
+[node name="LinhaDeLargada" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Forma" type="CollisionShape3D" parent="LinhaDeLargada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("Forma_17")
+
+[node name="PosteEsquerdo" type="MeshInstance3D" parent="LinhaDeLargada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.3, 0)
+mesh = SubResource("Malha_31")
+
+[node name="PosteDireito" type="MeshInstance3D" parent="LinhaDeLargada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 2.3, 0)
+mesh = SubResource("Malha_31")
+
+[node name="Faixa" type="MeshInstance3D" parent="LinhaDeLargada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0)
+mesh = SubResource("Malha_32")
+
+[node name="FaixaNoChao" type="MeshInstance3D" parent="LinhaDeLargada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("Malha_33")
+
+[node name="Texto" type="Label3D" parent="LinhaDeLargada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0.22)
+pixel_size = 0.01
+text = "LARGADA"
+font_size = 80
+modulate = Color(1, 1, 1, 1)
+outline_size = 16
+
+[node name="LinhaDeChegada" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -125)
+
+[node name="Forma" type="CollisionShape3D" parent="LinhaDeChegada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("Forma_18")
+
+[node name="PosteEsquerdo" type="MeshInstance3D" parent="LinhaDeChegada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.3, 0)
+mesh = SubResource("Malha_34")
+
+[node name="PosteDireito" type="MeshInstance3D" parent="LinhaDeChegada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 2.3, 0)
+mesh = SubResource("Malha_34")
+
+[node name="Faixa" type="MeshInstance3D" parent="LinhaDeChegada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0)
+mesh = SubResource("Malha_35")
+
+[node name="FaixaNoChao" type="MeshInstance3D" parent="LinhaDeChegada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("Malha_36")
+
+[node name="Texto" type="Label3D" parent="LinhaDeChegada"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0.22)
+pixel_size = 0.01
+text = "CHEGADA"
+font_size = 80
+modulate = Color(1, 1, 1, 1)
+outline_size = 16
+
+[node name="Jogador" parent="." instance=ExtResource("2_jogador")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="InterfaceDoEpisodio" type="CanvasLayer" parent="."]
+
+[node name="Cronometro" type="Label" parent="InterfaceDoEpisodio"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = 16.0
+offset_right = 250.0
+offset_bottom = 76.0
+grow_horizontal = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 42
+text = "00:00.0"
+horizontal_alignment = 1
+
+[node name="MensagemGrande" type="Label" parent="InterfaceDoEpisodio"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -260.0
+offset_right = 400.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0, 0.4, 1)
+theme_override_constants/outline_size = 16
+theme_override_font_sizes/font_size = 80
+text = "CHEGOU!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Apresentador" parent="." instance=ExtResource("7_apresentador")]

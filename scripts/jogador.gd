@@ -39,6 +39,19 @@ enum Estado {
 ## Força com que o jogador empurra caixas ao esbarrar nelas andando.
 @export var forca_de_empurrao: float = 2.0
 
+# --- Voltar ao ponto de controle ---
+## Se o jogador cair abaixo desta altura (fora da pista ou do mapa), ele volta
+## para o último ponto de controle (ou para onde começou a fase).
+@export var altura_limite: float = -10.0
+
+# --- Chão escorregadio (ex.: a rampa de sabão do Episódio 1) ---
+## Quanto as pernas conseguem acelerar no escorregadio (m/s²). Pouco = sem controle.
+@export var aceleracao_no_escorregadio: float = 6.0
+## Quanto o escorregadio freia sozinho. Perto de 0 = desliza quase para sempre.
+@export var atrito_no_escorregadio: float = 0.2
+## Velocidade máxima deslizando (m/s).
+@export var velocidade_maxima_escorregando: float = 14.0
+
 # --- Multiplayer (futuro) ---
 ## Número que identifica este jogador na partida. Hoje é sempre 1. No
 ## multiplayer, cada jogador terá o seu, e ele vai junto em cada evento.
@@ -78,6 +91,13 @@ var alvo_da_camera: Vector3 = Vector3.ZERO
 var lado_da_camera: Vector3 = Vector3.FORWARD
 var tempo_caido: float = 0.0
 
+# --- Ponto de controle e terreno ---
+# Onde (e virado para onde) o jogador reaparece se cair da pista.
+# Começa sendo o lugar onde ele nasceu; os pontos de controle trocam isso.
+var ponto_de_retorno: Transform3D
+# Zonas de terreno especial em que o jogador está agora (escorregadio, lento...).
+var zonas_de_terreno: Array[Node] = []
+
 # "Cabeca" é o nó que segura a câmera. Giramos ele para olhar para cima e para baixo.
 @onready var cabeca: Node3D = $Cabeca
 @onready var camera: Camera3D = $Cabeca/Camera3D
@@ -101,6 +121,7 @@ func _ready() -> void:
 	raio_de_mira.add_exception(self)
 	barra_de_forca.visible = false
 	altura_da_cabeca = cabeca.position.y
+	ponto_de_retorno = global_transform
 
 
 # _unhandled_input() roda toda vez que acontece algo no teclado ou mouse.
@@ -176,7 +197,8 @@ func _physics_process(delta: float) -> void:
 
 	# Carregar peso deixa o jogador mais lento (e pulando menos).
 	var multiplicador := _multiplicador_de_peso()
-	var velocidade_atual := velocidade * multiplicador
+	# Alguns terrenos (como a piscina de bolinhas) também deixam mais lento.
+	var velocidade_atual := velocidade * multiplicador * _multiplicador_de_terreno()
 
 	# 1) Gravidade: se estiver no ar, vai caindo cada vez mais rápido.
 	if not is_on_floor():
@@ -192,7 +214,10 @@ func _physics_process(delta: float) -> void:
 	# "transform.basis" faz a direção seguir para onde o personagem está virado.
 	var direcao: Vector3 = (transform.basis * Vector3(entrada.x, 0, entrada.y)).normalized()
 
-	if direcao != Vector3.ZERO:
+	if _em_terreno_escorregadio():
+		# No escorregadio, o movimento funciona diferente (veja a função).
+		_andar_escorregando(direcao, delta)
+	elif direcao != Vector3.ZERO:
 		velocity.x = direcao.x * velocidade_atual
 		velocity.z = direcao.z * velocidade_atual
 	else:
@@ -203,6 +228,11 @@ func _physics_process(delta: float) -> void:
 	# 4) Aplica o movimento. move_and_slide() cuida de colisões com paredes e chão.
 	velocidade_antes_de_mover = velocity
 	move_and_slide()
+
+	# Caiu para fora da pista? Volta para o último ponto de controle.
+	if global_position.y < altura_limite:
+		voltar_ao_ponto_de_retorno()
+		return
 
 	_verificar_queda()
 	_empurrar_objetos()
@@ -263,21 +293,26 @@ func ponto_de_segurar(objeto: ObjetoPegavel) -> Vector3:
 # Nocaute
 # ---------------------------------------------------------------------------
 
-# Um objeto com física bateu no jogador. Quem chama é o próprio objeto
-# (scripts/objeto_pegavel.gd), passando a velocidade que ele tinha ANTES da
-# batida. Aqui o jogador decide se a pancada foi forte o bastante.
-func receber_impacto(objeto: ObjetoPegavel, velocidade_do_objeto: Vector3) -> void:
-	if estado != Estado.NORMAL or objeto == objeto_segurado:
+# Algo bateu no jogador: uma caixa, uma bola gigante, um rolo giratório...
+# Quem chama é a própria coisa que bateu, dizendo:
+#   fonte: o nome dela (vai para o evento e para as falas do apresentador)
+#   massa: o peso dela (kg)
+#   velocidade_da_fonte: a velocidade dela ANTES da batida
+#   posicao_da_fonte: de onde ela veio (para saber se veio "contra" o jogador)
+# Aqui o jogador decide se a pancada foi forte o bastante para cair.
+func receber_impacto(fonte: String, massa: float, velocidade_da_fonte: Vector3,
+		posicao_da_fonte: Vector3) -> void:
+	if estado != Estado.NORMAL:
 		return
 
 	# Só conta a parte da velocidade que vem NA DIREÇÃO do jogador. Assim,
 	# andar contra uma caixa parada não derruba ninguém.
 	var centro_do_corpo := global_position + Vector3.UP * 0.9
-	var para_mim := (centro_do_corpo - objeto.global_position).normalized()
-	var velocidade_contra_mim := maxf(velocidade_do_objeto.dot(para_mim), 0.0)
+	var para_mim := (centro_do_corpo - posicao_da_fonte).normalized()
+	var velocidade_contra_mim := maxf(velocidade_da_fonte.dot(para_mim), 0.0)
 
 	# Força da batida = metade do peso × velocidade × velocidade (em joules).
-	var forca_do_impacto := 0.5 * objeto.mass * velocidade_contra_mim * velocidade_contra_mim
+	var forca_do_impacto := 0.5 * massa * velocidade_contra_mim * velocidade_contra_mim
 	if forca_do_impacto < ConfigNocaute.FORCA_MINIMA_IMPACTO:
 		return
 
@@ -285,14 +320,14 @@ func receber_impacto(objeto: ObjetoPegavel, velocidade_do_objeto: Vector3) -> vo
 	var intensidade := (forca_do_impacto - ConfigNocaute.FORCA_MINIMA_IMPACTO) \
 		/ (ConfigNocaute.FORCA_PARA_TEMPO_MAXIMO - ConfigNocaute.FORCA_MINIMA_IMPACTO)
 	# O empurrão: objeto pesado e rápido joga o boneco mais longe.
-	var empurrao := velocidade_do_objeto * objeto.mass / ConfigNocaute.MASSA_DO_JOGADOR \
+	var empurrao := velocidade_da_fonte * massa / ConfigNocaute.MASSA_DO_JOGADOR \
 		* ConfigNocaute.MULTIPLICADOR_DO_EMPURRAO
 	empurrao = empurrao.limit_length(10.0)
 
 	# "call_deferred" = fazer isso logo em seguida, e não agora. A batida é
 	# avisada no meio do cálculo da física, e a Godot não deixa criar corpos
 	# novos (o boneco) bem nesse momento.
-	nocautear.call_deferred("objeto", objeto.nome_exibido, forca_do_impacto, intensidade, empurrao)
+	nocautear.call_deferred("objeto", fonte, forca_do_impacto, intensidade, empurrao)
 
 
 # Transforma o jogador em boneco mole.
@@ -353,6 +388,11 @@ func nocautear(causa: String, fonte: String, forca_do_impacto: float, intensidad
 func _processar_nocaute(delta: float) -> void:
 	_mover_camera_de_nocaute(delta)
 	_atualizar_interface()
+	# O boneco caiu para fora da pista? Nem espera: volta no ponto de controle.
+	if boneco.posicao_do_corpo().y < altura_limite:
+		_registrar_queda_da_pista()
+		_levantar(true)
+		return
 	tempo_atordoado_restante -= delta
 	if tempo_atordoado_restante <= 0.0:
 		_levantar()
@@ -375,11 +415,16 @@ func _mover_camera_de_nocaute(delta: float) -> void:
 
 
 # Fim do atordoamento: o jogador volta a ser ele mesmo, onde o boneco caiu.
-func _levantar() -> void:
+# (Ou no último ponto de controle, se "no_ponto_de_retorno" for verdadeiro.)
+func _levantar(no_ponto_de_retorno: bool = false) -> void:
 	estado = Estado.LEVANTANDO
 
-	# Coloca o jogador em pé no chão, embaixo do tronco do boneco.
-	global_position = _procurar_chao_embaixo_de(boneco.posicao_do_corpo())
+	if no_ponto_de_retorno:
+		global_transform = ponto_de_retorno
+		cabeca.rotation.x = 0.0
+	else:
+		# Coloca o jogador em pé no chão, embaixo do tronco do boneco.
+		global_position = _procurar_chao_embaixo_de(boneco.posicao_do_corpo())
 	velocity = Vector3.ZERO
 	colisao.set_deferred("disabled", false)
 	boneco.queue_free()  # "queue_free" = apagar o boneco assim que possível
@@ -451,6 +496,83 @@ func _procurar_chao_embaixo_de(ponto: Vector3) -> Vector3:
 	if resultado.is_empty():
 		return ponto
 	return resultado.position
+
+
+# ---------------------------------------------------------------------------
+# Pontos de controle e terrenos especiais
+# ---------------------------------------------------------------------------
+
+# Chamado por um ponto de controle (scripts/ponto_de_controle.gd) quando o
+# jogador passa por ele: "se cair, volte para cá".
+func definir_ponto_de_retorno(novo_ponto: Transform3D) -> void:
+	ponto_de_retorno = novo_ponto
+
+
+# O jogador caiu da pista: reaparece no último ponto de controle.
+func voltar_ao_ponto_de_retorno() -> void:
+	soltar_objeto()
+	global_transform = ponto_de_retorno
+	cabeca.rotation.x = 0.0
+	velocity = Vector3.ZERO
+	# Recomeça a medição de queda (reaparecer não conta como cair).
+	estava_no_chao = true
+	altura_maxima_no_ar = global_position.y
+	_registrar_queda_da_pista()
+
+
+func _registrar_queda_da_pista() -> void:
+	RegistroDeEventos.registrar({
+		"tipo": "caiu_da_pista",
+		"jogador": name,
+		"id_jogador": id_jogador,
+		"posicao": global_position,
+	})
+
+
+# Chamados pelas zonas de terreno (scripts/zona_de_terreno.gd) quando o
+# jogador entra ou sai delas.
+func entrar_na_zona(zona: Node) -> void:
+	if not zona in zonas_de_terreno:
+		zonas_de_terreno.append(zona)
+
+
+func sair_da_zona(zona: Node) -> void:
+	zonas_de_terreno.erase(zona)
+
+
+# Está pisando em alguma zona escorregadia?
+func _em_terreno_escorregadio() -> bool:
+	for zona in zonas_de_terreno:
+		if zona.escorregadia:
+			return true
+	return false
+
+
+# Junta a lentidão de todas as zonas em que o jogador está (1 = normal).
+func _multiplicador_de_terreno() -> float:
+	var resultado := 1.0
+	for zona in zonas_de_terreno:
+		resultado *= zona.multiplicador_de_velocidade
+	return resultado
+
+
+# Andar no escorregadio: em vez de a velocidade obedecer na hora às teclas,
+# as teclas só dão um "empurrãozinho" e o jogador vai deslizando. Numa
+# ladeira, a gravidade ainda puxa ladeira abaixo.
+func _andar_escorregando(direcao: Vector3, delta: float) -> void:
+	var deslize := Vector2(velocity.x, velocity.z)
+	# 1) O empurrãozinho das pernas.
+	deslize += Vector2(direcao.x, direcao.z) * aceleracao_no_escorregadio * delta
+	# 2) A ladeira: a parte da gravidade que aponta "morro abaixo".
+	if is_on_floor():
+		var normal := get_floor_normal()  # a direção "para cima" do chão inclinado
+		var morro_abaixo := (Vector3.DOWN - normal * normal.dot(Vector3.DOWN)) * gravidade
+		deslize += Vector2(morro_abaixo.x, morro_abaixo.z) * delta
+	# 3) Um atrito bem fraquinho e um limite de velocidade.
+	deslize *= 1.0 - atrito_no_escorregadio * delta
+	deslize = deslize.limit_length(velocidade_maxima_escorregando)
+	velocity.x = deslize.x
+	velocity.z = deslize.y
 
 
 # ---------------------------------------------------------------------------

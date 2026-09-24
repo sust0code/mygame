@@ -74,8 +74,8 @@ Cada episódio tem um tema, provas próprias e termina com um **chefe**.
 
 1. Personagem em primeira pessoa ✅
 2. Pegar / carregar / arremessar ✅
-3. Nocaute
-4. Episódio 1 para um jogador
+3. Nocaute ✅
+4. Episódio 1 para um jogador (4A: estúdio e gincana ✅; 4B: A Parede; 4C: acabamento)
 5. Multiplayer
 6. Sistemas do programa (audiência, voz, microfone, replay)
 7. Episódios 2 a 5
