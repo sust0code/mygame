@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_pegavel.gd" id="1_objeto"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cor"]
+albedo_color = Color(0.76, 0.58, 0.36, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_caixa"]
+material = SubResource("StandardMaterial3D_cor")
+size = Vector3(0.8, 0.8, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_caixa"]
+size = Vector3(0.8, 0.8, 0.8)
+
+[node name="CaixaMedia" type="RigidBody3D"]
+mass = 8.0
+script = ExtResource("1_objeto")
+nome_exibido = "Caixa média"
+
+[node name="Malha" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_caixa")
+
+[node name="Colisao" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_caixa")

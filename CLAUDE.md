@@ -50,12 +50,24 @@ A pasta `.godot/` é gerada automaticamente pela Godot e não vai para o Git.
 1. **Personagem andando** — cena com chão e luz; personagem em primeira pessoa
    que anda com WASD, olha com o mouse e pula com espaço. ✅ feita
 2. **Pegar, carregar e arremessar caixas** — objetos com física que o jogador
-   pode agarrar, segurar na frente da câmera e jogar longe.
+   pode agarrar, segurar na frente da câmera e jogar longe. ✅ feita
 3. **Primeira fase para um jogador** — uma casa com móveis, um caminhão e um
    objetivo (colocar tudo no caminhão), com começo, meio e fim.
 4. **Multiplayer** — até 4 jogadores na mesma partida, carregando móveis juntos.
 5. **Conteúdo e humor** — mais fases, móveis variados, efeitos sonoros, física
    engraçada, polimento para a Steam.
+
+## Como os objetos pegáveis funcionam (base para o multiplayer)
+
+- Todo objeto que pode ser pego usa o script `scripts/objeto_pegavel.gd`
+  (tipo `ObjetoPegavel`, um `RigidBody3D`). O peso é a propriedade `mass`.
+- O objeto guarda uma **lista** `segurado_por` com os jogadores que o seguram,
+  e é o próprio objeto que calcula a força para ir até a frente deles (média
+  dos pontos de todos). Não trocar isso por "um jogador só".
+- `jogadores_necessarios` diz quantos jogadores precisam segurar juntos para
+  levantar. Com menos gente, o objeto só é arrastado pelo chão.
+- Cada jogador tem `forca` (kg que carrega bem). Peso acima disso deixa o
+  jogador lento, faz o objeto pender e diminui a força do arremesso.
 
 O multiplayer só entra na etapa 4. Até lá, tudo é pensado para um jogador, mas
 sem decisões que atrapalhem o multiplayer depois.
