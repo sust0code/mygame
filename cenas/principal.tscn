@@ -1,0 +1,76 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="PackedScene" path="res://cenas/jogador.tscn" id="1_jogador"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ceu"]
+
+[sub_resource type="Sky" id="Sky_ceu"]
+sky_material = SubResource("ProceduralSkyMaterial_ceu")
+
+[sub_resource type="Environment" id="Environment_ambiente"]
+background_mode = 2
+sky = SubResource("Sky_ceu")
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_chao"]
+albedo_color = Color(0.45, 0.6, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_chao"]
+material = SubResource("StandardMaterial3D_chao")
+size = Vector3(40, 1, 40)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_chao"]
+size = Vector3(40, 1, 40)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_caixa"]
+albedo_color = Color(0.72, 0.52, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_caixa"]
+material = SubResource("StandardMaterial3D_caixa")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_caixa"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_caixa_grande"]
+material = SubResource("StandardMaterial3D_caixa")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_caixa_grande"]
+size = Vector3(2, 2, 2)
+
+[node name="Principal" type="Node3D"]
+
+[node name="Ambiente" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ambiente")
+
+[node name="Sol" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 10, 0)
+shadow_enabled = true
+
+[node name="Chao" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="Malha" type="MeshInstance3D" parent="Chao"]
+mesh = SubResource("BoxMesh_chao")
+
+[node name="Colisao" type="CollisionShape3D" parent="Chao"]
+shape = SubResource("BoxShape3D_chao")
+
+[node name="Caixa" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -5)
+
+[node name="Malha" type="MeshInstance3D" parent="Caixa"]
+mesh = SubResource("BoxMesh_caixa")
+
+[node name="Colisao" type="CollisionShape3D" parent="Caixa"]
+shape = SubResource("BoxShape3D_caixa")
+
+[node name="CaixaGrande" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -8)
+
+[node name="Malha" type="MeshInstance3D" parent="CaixaGrande"]
+mesh = SubResource("BoxMesh_caixa_grande")
+
+[node name="Colisao" type="CollisionShape3D" parent="CaixaGrande"]
+shape = SubResource("BoxShape3D_caixa_grande")
+
+[node name="Jogador" parent="." instance=ExtResource("1_jogador")]
