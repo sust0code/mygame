@@ -1,6 +1,19 @@
-# Pasta gerada automaticamente pela Godot (cache e importações)
+# --- Godot 4 ---
+# Pasta de cache e importações. A Godot recria sozinha ao abrir o projeto.
 .godot/
 
-# Exportações do jogo
+# Arquivos do modelo de exportação para Android (gerados pela Godot).
+/android/
+
+# --- Exportações do jogo ---
+# Onde vamos salvar os executáveis (.exe etc.). Não guardamos no Git.
 /build/
+/exportacoes/
+
+# --- Lixo do sistema e de editores ---
 *.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

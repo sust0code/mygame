@@ -1,0 +1,3 @@
+# Garante que os arquivos de texto usem a mesma quebra de linha em
+# Windows, Mac e Linux (evita "mudanças fantasmas" nos arquivos da Godot).
+* text=auto eol=lf
