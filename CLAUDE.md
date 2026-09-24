@@ -18,8 +18,20 @@ O objetivo é um dia publicar na Steam.
 
 ## Tecnologia
 
-- **Engine:** Godot 4 (projeto criado para 4.3 ou mais recente).
+- **Engine:** Godot **4.7** (é a versão instalada no computador de quem desenvolve).
 - **Linguagem:** GDScript (a linguagem própria da Godot). Não usar C#.
+
+### Regras de versão (Godot 4.7)
+
+- Sempre usar recursos, nós, funções e sintaxe que existem na **Godot 4.7**.
+- Não usar sintaxe da Godot 3 (ex.: `KinematicBody`, `onready var` sem `@`,
+  `export var` sem `@`, `yield`) nem recursos que só existem em versões mais
+  novas que a 4.7.
+- **Na dúvida se algo existe ou funciona igual na 4.7, avisar em vez de
+  adivinhar.** Dizer claramente o que não foi confirmado e como verificar.
+- Antes de entregar, validar o projeto com a Godot 4.7 sem janela (`--headless`):
+  abrir o projeto, conferir que não há erros nem avisos e testar o comportamento
+  com um script que simula as teclas.
 - Nomes de arquivos, nós, variáveis e ações de controle em português, sem acento
   (ex.: `jogador.gd`, `velocidade`, `mover_frente`).
 
