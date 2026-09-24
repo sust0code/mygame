@@ -1,8 +1,14 @@
-# Mudança Desastrosa
+# Ao Vivo e Sem Ensaio
 
-Jogo co-op em primeira pessoa para até 4 jogadores. Os amigos precisam carregar
-os móveis de uma casa até o caminhão de mudança, com física exagerada e engraçada.
-O objetivo é um dia publicar na Steam.
+Jogo co-op online de 1 a 4 jogadores, em primeira pessoa, 3D low-poly colorido.
+Os jogadores são participantes de um programa de TV caótico apresentado por
+**Gilberto Glamour**. Cada fase é um episódio com tema e provas diferentes. A meta
+é sobreviver à temporada e ganhar **R$ 1 milhão** na Grande Final. O progresso é
+medido pela **audiência**, que sobe com provas vencidas e também com desastres
+engraçados. Duração total: 3 a 4 horas. O objetivo é um dia publicar na Steam.
+
+O documento de design completo (episódios, chefes, sistemas) está em **`GDD.md`**.
+Consulte-o antes de criar qualquer fase ou sistema novo.
 
 ## Sobre quem está desenvolvendo
 
@@ -20,6 +26,8 @@ O objetivo é um dia publicar na Steam.
 
 - **Engine:** Godot **4.7** (é a versão instalada no computador de quem desenvolve).
 - **Linguagem:** GDScript (a linguagem própria da Godot). Não usar C#.
+- **Visual:** 3D low-poly colorido (formas simples, cores fortes, sem texturas
+  realistas).
 
 ### Regras de versão (Godot 4.7)
 
@@ -39,23 +47,34 @@ O objetivo é um dia publicar na Steam.
 
 ```
 project.godot      -> configuração do projeto (nome, cena inicial, controles)
+GDD.md             -> documento de design do jogo (o "roteiro" criativo)
 cenas/             -> arquivos .tscn (as "fases" e os "objetos montados")
 scripts/           -> arquivos .gd (o código em GDScript)
 ```
 
 A pasta `.godot/` é gerada automaticamente pela Godot e não vai para o Git.
+A cena `cenas/principal.tscn` é, por enquanto, uma **área de testes** (chão,
+caixas, rampa e pilha), não uma fase do jogo final.
 
 ## Roteiro do projeto (etapas)
 
-1. **Personagem andando** — cena com chão e luz; personagem em primeira pessoa
-   que anda com WASD, olha com o mouse e pula com espaço. ✅ feita
-2. **Pegar, carregar e arremessar caixas** — objetos com física que o jogador
-   pode agarrar, segurar na frente da câmera e jogar longe. ✅ feita
-3. **Primeira fase para um jogador** — uma casa com móveis, um caminhão e um
-   objetivo (colocar tudo no caminhão), com começo, meio e fim.
-4. **Multiplayer** — até 4 jogadores na mesma partida, carregando móveis juntos.
-5. **Conteúdo e humor** — mais fases, móveis variados, efeitos sonoros, física
-   engraçada, polimento para a Steam.
+1. **Personagem em primeira pessoa** — anda com WASD, olha com o mouse e pula
+   com espaço. ✅ feita
+2. **Pegar, carregar e arremessar** — objetos com física que o jogador agarra,
+   segura na frente da câmera e arremessa. ✅ feita
+3. **Nocaute** — o jogador é nocauteado (vira um boneco mole, "ragdoll") e
+   depois se levanta. Não existe morte no jogo.
+4. **Episódio 1 para um jogador** — "O Piloto": gincana de obstáculos infláveis
+   e o chefe A Parede, com começo, meio e fim.
+5. **Multiplayer** — de 1 a 4 jogadores online na mesma partida.
+6. **Sistemas do programa** — medidor de audiência, chat de voz por proximidade,
+   provas com microfone e replay automático dos melhores momentos.
+7. **Episódios 2 a 5** — Cozinha ao Vivo, Especial de Terror, Show de Talentos
+   e Reality na Selva.
+8. **Grande Final** — fuga dos bastidores, tomada da sala de controle e chefe
+   final Gilberto Glamour na Roleta do Destino.
+9. **Opcionais** — chat de lives votando em surpresas e missão secreta de
+   sabotador.
 
 ## Como os objetos pegáveis funcionam (base para o multiplayer)
 
@@ -69,5 +88,5 @@ A pasta `.godot/` é gerada automaticamente pela Godot e não vai para o Git.
 - Cada jogador tem `forca` (kg que carrega bem). Peso acima disso deixa o
   jogador lento, faz o objeto pender e diminui a força do arremesso.
 
-O multiplayer só entra na etapa 4. Até lá, tudo é pensado para um jogador, mas
+O multiplayer só entra na etapa 5. Até lá, tudo é pensado para um jogador, mas
 sem decisões que atrapalhem o multiplayer depois.

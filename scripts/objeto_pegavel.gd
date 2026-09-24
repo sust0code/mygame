@@ -12,7 +12,7 @@ extends RigidBody3D
 
 ## Quantos jogadores precisam segurar JUNTOS para levantar o objeto.
 ## Com menos gente, só dá para arrastar pelo chão.
-## (Preparado para o multiplayer da Etapa 4.)
+## (Preparado para o multiplayer da Etapa 5.)
 @export_range(1, 4) var jogadores_necessarios: int = 1
 
 ## Rapidez da "mola" que puxa o objeto para a frente do jogador.
@@ -25,7 +25,7 @@ extends RigidBody3D
 
 # Lista de jogadores que estão segurando este objeto agora.
 # É uma lista (e não um só jogador) justamente para o multiplayer:
-# no futuro, dois ou mais amigos podem segurar o mesmo sofá.
+# no futuro, dois ou mais jogadores podem segurar o mesmo objeto pesado.
 var segurado_por: Array = []
 
 # Metade do tamanho do objeto (do centro até a ponta). Usado para segurar
