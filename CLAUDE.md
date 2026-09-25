@@ -112,6 +112,12 @@ duplo clique nela no painel Sistema de Arquivos e F6 ("rodar cena atual").
 
 - Não existe vida nem morte. O jogador tem um `estado`: `NORMAL`,
   `NOCAUTEADO` ou `LEVANTANDO` (em `scripts/jogador.gd`).
+- Controles: WASD anda, **Shift corre** (`velocidade_correndo`), Espaço pula,
+  E pega/solta, botão esquerdo arremessa, K nocaute de teste.
+- O jogador tem um `Corpo` de blocos (mesmas cores do boneco do nocaute) com
+  `cast_shadow = 3` ("só sombra"): invisível para a própria câmera, mas faz
+  sombra. Some durante o nocaute. No multiplayer, os outros jogadores devem
+  ver esse corpo normalmente (sombra ligada e visível).
 - Causas: batida de `ObjetoPegavel` (energia ½·massa·velocidade², só a parte
   da velocidade na direção do jogador), queda alta, ou a tecla **K** de teste
   (só funciona rodando pela Godot, em modo debug).
@@ -135,6 +141,9 @@ duplo clique nela no painel Sistema de Arquivos e F6 ("rodar cena atual").
   `caiu_da_pista`.
 - Terrenos especiais são `ZonaDeTerreno` (Area3D) com `escorregadia` e
   `multiplicador_de_velocidade`; quem aplica o efeito é o jogador.
+- No escorregadio, **só a gravidade acelera, e só na descida**. As pernas
+  empurram menos do que a ladeira puxa (não dá para subir a rampa de sabão)
+  e nunca passam da velocidade de andar/correr.
 - O apresentador (`cenas/apresentador.tscn`) e a plateia **só escutam** o
   sinal `evento_registrado`. Tipos de evento usados: `inicio_do_episodio`,
   `inicio_da_prova`, `nocaute`, `caiu_da_pista`, `checkpoint`, `chegada`.

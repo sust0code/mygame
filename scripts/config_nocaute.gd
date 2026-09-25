@@ -22,8 +22,10 @@ const ALTURA_MINIMA_QUEDA: float = 4.0
 # --- Quanto tempo o jogador fica atordoado ---
 
 ## Tempo atordoado, em segundos, no nocaute mais fraco e no mais forte.
-const TEMPO_ATORDOADO_MINIMO: float = 3.0
-const TEMPO_ATORDOADO_MAXIMO: float = 5.0
+## (Os dois em 2,0 = sempre 2 segundos no chão. Para voltar a variar com a
+## força da pancada, use valores diferentes, ex.: 2,0 e 4,0.)
+const TEMPO_ATORDOADO_MINIMO: float = 2.0
+const TEMPO_ATORDOADO_MAXIMO: float = 2.0
 
 ## A partir desta força de batida, o tempo atordoado é o máximo.
 const FORCA_PARA_TEMPO_MAXIMO: float = 1200.0

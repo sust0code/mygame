@@ -19,6 +19,7 @@ enum Estado {
 # O "@export" faz o valor aparecer no painel Inspetor da Godot, então dá para
 # mudar sem mexer no código.
 @export var velocidade: float = 5.0            # metros por segundo andando
+@export var velocidade_correndo: float = 8.5   # metros por segundo segurando Shift
 @export var forca_do_pulo: float = 4.5         # quanto mais alto, mais alto o pulo
 @export var sensibilidade_mouse: float = 0.003 # quanto a câmera gira por movimento do mouse
 
@@ -46,7 +47,9 @@ enum Estado {
 
 # --- Chão escorregadio (ex.: a rampa de sabão do Episódio 1) ---
 ## Quanto as pernas conseguem acelerar no escorregadio (m/s²). Pouco = sem controle.
-@export var aceleracao_no_escorregadio: float = 6.0
+## Fica MENOR que o puxão da ladeira: assim ninguém consegue subir a rampa de
+## sabão, e quem tenta vai escorregando para trás.
+@export var aceleracao_no_escorregadio: float = 2.0
 ## Quanto o escorregadio freia sozinho. Perto de 0 = desliza quase para sempre.
 @export var atrito_no_escorregadio: float = 0.2
 ## Velocidade máxima deslizando (m/s).
@@ -111,6 +114,9 @@ var zonas_de_terreno: Array[Node] = []
 @onready var colisao: CollisionShape3D = $Colisao
 # Uma segunda câmera, que fica "de fora" filmando o boneco caído.
 @onready var camera_nocaute: Camera3D = $CameraNocaute
+# O corpo de blocos do jogador. Você não vê ele (a câmera fica dentro), mas
+# ele faz sombra no chão. No multiplayer, é o que os outros vão enxergar.
+@onready var corpo: Node3D = $Corpo
 
 
 # _ready() roda uma vez, quando o personagem aparece na cena.
@@ -197,8 +203,9 @@ func _physics_process(delta: float) -> void:
 
 	# Carregar peso deixa o jogador mais lento (e pulando menos).
 	var multiplicador := _multiplicador_de_peso()
-	# Alguns terrenos (como a piscina de bolinhas) também deixam mais lento.
-	var velocidade_atual := velocidade * multiplicador * _multiplicador_de_terreno()
+	# Shift = correr. Alguns terrenos (como a piscina de bolinhas) deixam mais lento.
+	var velocidade_base := velocidade_correndo if Input.is_action_pressed("correr") else velocidade
+	var velocidade_atual := velocidade_base * multiplicador * _multiplicador_de_terreno()
 
 	# 1) Gravidade: se estiver no ar, vai caindo cada vez mais rápido.
 	if not is_on_floor():
@@ -216,7 +223,7 @@ func _physics_process(delta: float) -> void:
 
 	if _em_terreno_escorregadio():
 		# No escorregadio, o movimento funciona diferente (veja a função).
-		_andar_escorregando(direcao, delta)
+		_andar_escorregando(direcao, velocidade_atual, delta)
 	elif direcao != Vector3.ZERO:
 		velocity.x = direcao.x * velocidade_atual
 		velocity.z = direcao.z * velocidade_atual
@@ -361,6 +368,7 @@ func nocautear(causa: String, fonte: String, forca_do_impacto: float, intensidad
 
 	# Desliga a cápsula do jogador: agora quem bate nas coisas é o boneco.
 	colisao.set_deferred("disabled", true)
+	corpo.visible = false  # a sombra agora é a do boneco
 
 	# Cria o boneco mole no mesmo lugar e virado para o mesmo lado.
 	boneco = CENA_DO_BONECO.instantiate()
@@ -429,6 +437,7 @@ func _levantar(no_ponto_de_retorno: bool = false) -> void:
 	colisao.set_deferred("disabled", false)
 	boneco.queue_free()  # "queue_free" = apagar o boneco assim que possível
 	boneco = null
+	corpo.visible = true
 
 	# Volta para a câmera dos olhos, começando "deitado": a cabeça começa
 	# baixa e torta, e sobe até a altura normal com um pequeno "quique".
@@ -558,11 +567,15 @@ func _multiplicador_de_terreno() -> float:
 
 # Andar no escorregadio: em vez de a velocidade obedecer na hora às teclas,
 # as teclas só dão um "empurrãozinho" e o jogador vai deslizando. Numa
-# ladeira, a gravidade ainda puxa ladeira abaixo.
-func _andar_escorregando(direcao: Vector3, delta: float) -> void:
+# ladeira, a gravidade puxa ladeira abaixo. Quem acelera de verdade é só a
+# gravidade, e só na descida: as pernas não passam da velocidade de andar.
+func _andar_escorregando(direcao: Vector3, velocidade_das_pernas: float, delta: float) -> void:
 	var deslize := Vector2(velocity.x, velocity.z)
-	# 1) O empurrãozinho das pernas.
-	deslize += Vector2(direcao.x, direcao.z) * aceleracao_no_escorregadio * delta
+	# 1) O empurrãozinho das pernas, que só ajuda enquanto o jogador ainda
+	#    está mais devagar que a velocidade de andar naquela direção.
+	var para_onde := Vector2(direcao.x, direcao.z)
+	if para_onde != Vector2.ZERO and deslize.dot(para_onde) < velocidade_das_pernas:
+		deslize += para_onde * aceleracao_no_escorregadio * delta
 	# 2) A ladeira: a parte da gravidade que aponta "morro abaixo".
 	if is_on_floor():
 		var normal := get_floor_normal()  # a direção "para cima" do chão inclinado

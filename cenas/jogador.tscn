@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/jogador.gd" id="1_jogador"]
 
@@ -6,12 +6,77 @@
 radius = 0.4
 height = 1.8
 
+[sub_resource type="StandardMaterial3D" id="Material_pele"]
+albedo_color = Color(1, 0.78, 0.6, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_camisa"]
+albedo_color = Color(0.95, 0.3, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_calca"]
+albedo_color = Color(0.25, 0.4, 0.9, 1)
+
+[sub_resource type="BoxMesh" id="Malha_Tronco"]
+material = SubResource("Material_camisa")
+size = Vector3(0.5, 0.6, 0.3)
+
+[sub_resource type="BoxMesh" id="Malha_Cabeca"]
+material = SubResource("Material_pele")
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="BoxMesh" id="Malha_BracoEsquerdo"]
+material = SubResource("Material_camisa")
+size = Vector3(0.15, 0.6, 0.15)
+
+[sub_resource type="BoxMesh" id="Malha_BracoDireito"]
+material = SubResource("Material_camisa")
+size = Vector3(0.15, 0.6, 0.15)
+
+[sub_resource type="BoxMesh" id="Malha_PernaEsquerda"]
+material = SubResource("Material_calca")
+size = Vector3(0.2, 0.75, 0.2)
+
+[sub_resource type="BoxMesh" id="Malha_PernaDireita"]
+material = SubResource("Material_calca")
+size = Vector3(0.2, 0.75, 0.2)
+
 [node name="Jogador" type="CharacterBody3D"]
 script = ExtResource("1_jogador")
 
 [node name="Colisao" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_corpo")
+
+[node name="Corpo" type="Node3D" parent="."]
+
+[node name="Tronco" type="MeshInstance3D" parent="Corpo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+cast_shadow = 3
+mesh = SubResource("Malha_Tronco")
+
+[node name="Cabeca" type="MeshInstance3D" parent="Corpo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+cast_shadow = 3
+mesh = SubResource("Malha_Cabeca")
+
+[node name="BracoEsquerdo" type="MeshInstance3D" parent="Corpo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 1.1, 0)
+cast_shadow = 3
+mesh = SubResource("Malha_BracoEsquerdo")
+
+[node name="BracoDireito" type="MeshInstance3D" parent="Corpo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 1.1, 0)
+cast_shadow = 3
+mesh = SubResource("Malha_BracoDireito")
+
+[node name="PernaEsquerda" type="MeshInstance3D" parent="Corpo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13, 0.4, 0)
+cast_shadow = 3
+mesh = SubResource("Malha_PernaEsquerda")
+
+[node name="PernaDireita" type="MeshInstance3D" parent="Corpo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.4, 0)
+cast_shadow = 3
+mesh = SubResource("Malha_PernaDireita")
 
 [node name="Cabeca" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
