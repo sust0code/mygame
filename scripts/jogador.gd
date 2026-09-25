@@ -40,6 +40,10 @@ enum Estado {
 ## Força com que o jogador empurra caixas ao esbarrar nelas andando.
 @export var forca_de_empurrao: float = 2.0
 
+## Quanto o jogador consegue corrigir a direção no ar (m/s²). No ar, o
+## impulso do pulo é mantido: as teclas só ajustam um pouco o caminho.
+@export var controle_no_ar: float = 12.0
+
 # --- Voltar ao ponto de controle ---
 ## Se o jogador cair abaixo desta altura (fora da pista ou do mapa), ele volta
 ## para o último ponto de controle (ou para onde começou a fase).
@@ -136,10 +140,7 @@ func _unhandled_input(evento: InputEvent) -> void:
 	# (Caído no chão não dá para olhar em volta: quem manda é a câmera do nocaute.)
 	if evento is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED \
 			and estado != Estado.NOCAUTEADO:
-		rotate_y(-evento.relative.x * sensibilidade_mouse)
-		cabeca.rotate_x(-evento.relative.y * sensibilidade_mouse)
-		# Impede de olhar "além" do teto ou do chão (a cabeça daria uma cambalhota).
-		cabeca.rotation.x = clamp(cabeca.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+		girar_camera(evento.relative)
 
 	# ESC solta o mouse (para você conseguir sair da janela).
 	if evento.is_action_pressed("ui_cancel"):
@@ -183,6 +184,18 @@ func _unhandled_input(evento: InputEvent) -> void:
 		arremessar()
 
 
+# Gira a visão com o movimento do mouse (em pixels).
+# Para os lados: gira o corpo inteiro. Para cima/baixo: só a cabeça.
+func girar_camera(movimento: Vector2) -> void:
+	rotate_y(-movimento.x * sensibilidade_mouse)
+	# Soma o movimento ao ângulo atual e trava entre -89 e +89 graus ANTES de
+	# aplicar. Assim a cabeça nunca passa de "olhando reto para cima" ou
+	# "reto para baixo", nem com um movimento muito rápido do mouse, e a
+	# câmera não dá cambalhota.
+	var olhar := cabeca.rotation.x - movimento.y * sensibilidade_mouse
+	cabeca.rotation.x = clampf(olhar, deg_to_rad(-89.0), deg_to_rad(89.0))
+
+
 # _physics_process() roda 60 vezes por segundo. É aqui que o movimento acontece.
 # "delta" é o tempo (em segundos) desde a última vez que essa função rodou.
 func _physics_process(delta: float) -> void:
@@ -221,7 +234,10 @@ func _physics_process(delta: float) -> void:
 	# "transform.basis" faz a direção seguir para onde o personagem está virado.
 	var direcao: Vector3 = (transform.basis * Vector3(entrada.x, 0, entrada.y)).normalized()
 
-	if _em_terreno_escorregadio():
+	if not is_on_floor():
+		# No ar, o jogador segue o impulso que tinha (veja a função).
+		_mover_no_ar(direcao, velocidade_atual, delta)
+	elif _em_terreno_escorregadio():
 		# No escorregadio, o movimento funciona diferente (veja a função).
 		_andar_escorregando(direcao, velocidade_atual, delta)
 	elif direcao != Vector3.ZERO:
@@ -306,9 +322,11 @@ func ponto_de_segurar(objeto: ObjetoPegavel) -> Vector3:
 #   massa: o peso dela (kg)
 #   velocidade_da_fonte: a velocidade dela ANTES da batida
 #   posicao_da_fonte: de onde ela veio (para saber se veio "contra" o jogador)
+#   sempre_derruba: se verdadeiro, derruba mesmo que a pancada seja fraca
+#                   (ex.: os rolos vermelhos derrubam quem encostar neles)
 # Aqui o jogador decide se a pancada foi forte o bastante para cair.
 func receber_impacto(fonte: String, massa: float, velocidade_da_fonte: Vector3,
-		posicao_da_fonte: Vector3) -> void:
+		posicao_da_fonte: Vector3, sempre_derruba: bool = false) -> void:
 	if estado != Estado.NORMAL:
 		return
 
@@ -320,7 +338,7 @@ func receber_impacto(fonte: String, massa: float, velocidade_da_fonte: Vector3,
 
 	# Força da batida = metade do peso × velocidade × velocidade (em joules).
 	var forca_do_impacto := 0.5 * massa * velocidade_contra_mim * velocidade_contra_mim
-	if forca_do_impacto < ConfigNocaute.FORCA_MINIMA_IMPACTO:
+	if forca_do_impacto < ConfigNocaute.FORCA_MINIMA_IMPACTO and not sempre_derruba:
 		return
 
 	# De 0 (batida no limite) até 1 (batida fortíssima): decide o tempo no chão.
@@ -330,6 +348,10 @@ func receber_impacto(fonte: String, massa: float, velocidade_da_fonte: Vector3,
 	var empurrao := velocidade_da_fonte * massa / ConfigNocaute.MASSA_DO_JOGADOR \
 		* ConfigNocaute.MULTIPLICADOR_DO_EMPURRAO
 	empurrao = empurrao.limit_length(10.0)
+	# Quem "sempre derruba" joga o boneco longe mesmo quando está devagar.
+	if sempre_derruba and empurrao.length() < 3.0:
+		var para_fora := velocidade_da_fonte.normalized() if velocidade_da_fonte.length() > 0.1 else para_mim
+		empurrao = para_fora * 3.0 + Vector3.UP * 2.0
 
 	# "call_deferred" = fazer isso logo em seguida, e não agora. A batida é
 	# avisada no meio do cálculo da física, e a Godot não deixa criar corpos
@@ -563,6 +585,19 @@ func _multiplicador_de_terreno() -> float:
 	for zona in zonas_de_terreno:
 		resultado *= zona.multiplicador_de_velocidade
 	return resultado
+
+
+# Movimento no ar: ninguém "freia no ar". O jogador continua com a velocidade
+# que tinha ao sair do chão (por exemplo, embalado pelo gelo) e as teclas só
+# empurram um pouco para corrigir a direção. A velocidade no ar nunca passa
+# do que ele já tinha ou da velocidade de andar/correr (o que for maior).
+func _mover_no_ar(direcao: Vector3, velocidade_atual: float, delta: float) -> void:
+	var no_ar := Vector2(velocity.x, velocity.z)
+	var rapidez_ao_sair := no_ar.length()
+	no_ar += Vector2(direcao.x, direcao.z) * controle_no_ar * delta
+	no_ar = no_ar.limit_length(maxf(rapidez_ao_sair, velocidade_atual))
+	velocity.x = no_ar.x
+	velocity.z = no_ar.y
 
 
 # Andar no escorregadio: em vez de a velocidade obedecer na hora às teclas,

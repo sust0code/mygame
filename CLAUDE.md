@@ -21,6 +21,9 @@ Consulte-o antes de criar qualquer fase ou sistema novo.
 - Prefira soluções simples e legíveis a soluções "espertas". Comente o código em
   português, explicando o porquê de cada parte.
 - Avance em passos pequenos: cada entrega deve poder ser testada sozinha.
+- **Sempre que uma alteração ou melhoria estiver pronta para testar** (commit
+  enviado), mandar uma **notificação no celular** (ferramenta de push) dizendo
+  o que ficou pronto.
 
 ## Tecnologia
 
@@ -141,6 +144,18 @@ duplo clique nela no painel Sistema de Arquivos e F6 ("rodar cena atual").
   `caiu_da_pista`.
 - Terrenos especiais são `ZonaDeTerreno` (Area3D) com `escorregadia` e
   `multiplicador_de_velocidade`; quem aplica o efeito é o jogador.
+- **No ar ninguém freia**: o jogador mantém a velocidade que tinha ao sair do
+  chão (ex.: embalado no gelo) e as teclas só corrigem um pouco a direção
+  (`controle_no_ar`). A velocidade no ar nunca passa da maior entre a de saída
+  e a de andar/correr.
+- A câmera gira por `girar_camera()`: o olhar vertical é somado e travado entre
+  -89° e +89° antes de aplicar (nunca usar `rotate_x` na cabeça, que deixava
+  a câmera dar cambalhota com movimentos rápidos do mouse).
+- Obstáculos do Episódio 1: rolos giratórios (**derrubam quem encostar**,
+  `sempre_derruba`), martelos pêndulo (derrubam quando passam rápido), bolas
+  gigantes (desviadas por uma barreira diagonal no pé da rampa para cair na
+  água; bola parada por 2 s "estoura"). Nenhum obstáculo pode ter um "atalho"
+  seguro pelas bordas: grades e bordas altas demais para subir (> 1 m).
 - No escorregadio, **só a gravidade acelera, e só na descida**. As pernas
   empurram menos do que a ladeira puxa (não dá para subir a rampa de sabão)
   e nunca passam da velocidade de andar/correr.

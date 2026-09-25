@@ -14,6 +14,9 @@ const CORES := [
 ]
 
 var _velocidade_antes_da_batida: Vector3 = Vector3.ZERO
+# Há quanto tempo a bola está (quase) parada. Bola parada "estoura", para
+# nunca ficar entalada bloqueando o caminho.
+var _tempo_parada: float = 0.0
 
 
 func _ready() -> void:
@@ -30,7 +33,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_velocidade_antes_da_batida = linear_velocity
 	tempo_de_vida -= delta
-	if tempo_de_vida <= 0.0 or global_position.y < -20.0:
+	if linear_velocity.length() < 0.5:
+		_tempo_parada += delta
+	else:
+		_tempo_parada = 0.0
+	if tempo_de_vida <= 0.0 or global_position.y < -20.0 or _tempo_parada > 2.0:
 		queue_free()
 
 
